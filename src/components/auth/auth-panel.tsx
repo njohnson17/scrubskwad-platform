@@ -10,12 +10,25 @@ export type AuthState = {
   accessToken: string | null;
 };
 
-export function useAuthState() {
+type AuthHookState = AuthState & {
+  ready: boolean;
+  error: string | null;
+};
+
+export function useAuthState(): AuthHookState {
   const [auth, setAuth] = useState<AuthState>({ user: null, accessToken: null });
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = getSupabaseBrowser();
+    let supabase;
+    try {
+      supabase = getSupabaseBrowser();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Supabase is not configured.");
+      setReady(true);
+      return;
+    }
 
     supabase.auth.getSession().then(({ data }) => {
       setAuth({
@@ -36,7 +49,7 @@ export function useAuthState() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  return { ...auth, ready };
+  return { ...auth, ready, error };
 }
 
 export function AuthPanel({ onAuth }: { onAuth?: (auth: AuthState) => void }) {
@@ -51,30 +64,55 @@ export function AuthPanel({ onAuth }: { onAuth?: (auth: AuthState) => void }) {
 
   async function signIn() {
     setMessage("");
-    const supabase = getSupabaseBrowser();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setMessage(error.message);
+    try {
+      const supabase = getSupabaseBrowser();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setMessage(error.message);
+    } catch (caught) {
+      setMessage(caught instanceof Error ? caught.message : "Unable to sign in.");
+    }
   }
 
   async function sendMagicLink() {
     setMessage("");
-    const supabase = getSupabaseBrowser();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: typeof window !== "undefined" ? window.location.href : undefined
-      }
-    });
-    setMessage(error ? error.message : "Magic link sent. Check your email.");
+    try {
+      const supabase = getSupabaseBrowser();
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: typeof window !== "undefined" ? window.location.href : undefined
+        }
+      });
+      setMessage(error ? error.message : "Magic link sent. Check your email.");
+    } catch (caught) {
+      setMessage(caught instanceof Error ? caught.message : "Unable to send magic link.");
+    }
   }
 
   async function signOut() {
-    const supabase = getSupabaseBrowser();
-    await supabase.auth.signOut();
+    try {
+      const supabase = getSupabaseBrowser();
+      await supabase.auth.signOut();
+    } catch (caught) {
+      setMessage(caught instanceof Error ? caught.message : "Unable to sign out.");
+    }
   }
 
   if (!auth.ready) {
     return <p className="rounded-md bg-white p-4 text-sm text-scrub-graphite">Checking sign-in...</p>;
+  }
+
+  if (auth.error) {
+    return (
+      <section className="mx-auto mb-4 max-w-xl rounded-lg bg-white p-5 shadow-premium">
+        <p className="text-sm font-semibold uppercase text-scrub-graphite">Configuration required</p>
+        <h1 className="mt-2 text-2xl font-semibold text-scrub-ink">Supabase is not connected yet</h1>
+        <p className="mt-3 text-sm text-scrub-graphite">
+          Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel to enable sign-in, booking
+          storage, and admin access.
+        </p>
+      </section>
+    );
   }
 
   if (auth.user) {
@@ -134,4 +172,3 @@ export function AuthPanel({ onAuth }: { onAuth?: (auth: AuthState) => void }) {
     </section>
   );
 }
-
