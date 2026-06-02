@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SiteFooter } from "@/components/site/site-footer";
+import Footer from "@/components/Footer";
 import { SiteHeader } from "@/components/site/site-header";
 import "./globals.css";
 
@@ -18,10 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Sora:wght@300;400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <SiteHeader />
         {children}
-        <SiteFooter />
+        <Footer />
       </body>
     </html>
   );
