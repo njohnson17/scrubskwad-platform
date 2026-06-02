@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { SiteFooter } from "@/components/site/site-footer";
+import { SiteHeader } from "@/components/site/site-header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ScrubSkwad Booking",
-  description: "Premium booking and quote engine for ScrubSkwad services."
+  title: {
+    default: "ScrubSkwad | Premium Property Services",
+    template: "%s | ScrubSkwad"
+  },
+  description: "Premium cleaning, removals, bin cleaning and mobile vehicle care across Greater Manchester."
 };
 
 export default function RootLayout({
@@ -13,8 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }
-

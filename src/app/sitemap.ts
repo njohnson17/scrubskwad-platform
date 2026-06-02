@@ -3,7 +3,7 @@ import { listSeoPages } from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://scrubskwad.cleaning";
-  const staticRoutes = ["", "/booking", "/reviews", "/journal", "/social"].map((path) => ({
+  const staticRoutes = ["", "/services", "/locations", "/about", "/contact", "/booking", "/reviews", "/journal", "/social"].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date()
   }));
