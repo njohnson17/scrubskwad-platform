@@ -1,0 +1,359 @@
+"use client";
+
+/**
+ * ScrubSkwad — Luxury Footer
+ * ─────────────────────────────────────────────────────────
+ * File:    src/components/Footer.tsx
+ * Stack:   Next.js App Router · TypeScript · Tailwind CSS
+ * Palette: Uses only your existing scrub-* tokens from tailwind.config.ts
+ *          scrub-mist    #f2f2f2   (soft background)
+ *          scrub-taupe   #c8b9b9   (accent / border)
+ *          scrub-graphite #858585  (muted text)
+ *          scrub-ink     #272727   (headings / primary text)
+ *          scrub-panel   #ffffff   (card surfaces)
+ *
+ * Typography upgrade (luxury, not generic):
+ *   Display → Cormorant Garamond (editorial serif)
+ *   Body    → Sora (refined, modern, not Inter)
+ *
+ * Add to src/app/layout.tsx <head>:
+ *   <link
+ *     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Sora:wght@300;400;500&display=swap"
+ *     rel="stylesheet"
+ *   />
+ *
+ * Usage in src/app/layout.tsx:
+ *   import Footer from "@/components/Footer";
+ *   ...
+ *   <Footer />
+ * ─────────────────────────────────────────────────────────
+ */
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Instagram,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Leaf,
+  ArrowRight,
+  MapPin,
+  Phone,
+  Mail,
+  ShieldCheck,
+  Star,
+  Recycle,
+} from "lucide-react";
+
+// ── Data ────────────────────────────────────────────────
+
+const services = [
+  { label: "Residential Cleaning", href: "/services/residential" },
+  { label: "Commercial Cleaning", href: "/services/commercial" },
+  { label: "Deep Clean", href: "/services/deep-clean" },
+  { label: "Eco Sanitisation", href: "/services/eco-sanitisation" },
+  { label: "Bin Cleaning", href: "/services/bin-cleaning" },
+  { label: "Post-Construction", href: "/services/post-construction" },
+  { label: "Move In / Move Out", href: "/services/move-in-out" },
+];
+
+const company = [
+  { label: "About Us", href: "/about" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Book a Clean", href: "/book" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Journal", href: "/journal" },
+  { label: "Careers", href: "/careers" },
+  { label: "Contact", href: "/contact" },
+];
+
+const socials = [
+  { Icon: Instagram, href: "https://instagram.com/scrubskwad", label: "Instagram" },
+  { Icon: Facebook, href: "https://facebook.com/scrubskwad", label: "Facebook" },
+  { Icon: Twitter, href: "https://twitter.com/scrubskwad", label: "X / Twitter" },
+  { Icon: Linkedin, href: "https://linkedin.com/company/scrubskwad", label: "LinkedIn" },
+];
+
+const trust = [
+  { Icon: ShieldCheck, label: "Fully Insured" },
+  { Icon: Leaf, label: "Eco Certified" },
+  { Icon: Star, label: "5-Star Rated" },
+  { Icon: Recycle, label: "Carbon Neutral" },
+];
+
+// ── Component ────────────────────────────────────────────
+
+export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  async function handleSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? "success" : "error");
+      if (res.ok) setEmail("");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <footer
+      className="relative overflow-hidden bg-scrub-mist"
+      style={{ fontFamily: "'Sora', sans-serif" }}
+    >
+
+      {/* ── Trust strip ──────────────────────────────── */}
+      <div className="border-y border-scrub-taupe/30 bg-scrub-panel">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+          <div className="grid grid-cols-2 divide-x divide-scrub-taupe/20 sm:grid-cols-4">
+            {trust.map(({ Icon, label }) => (
+              <div
+                key={label}
+                className="flex items-center justify-center gap-2.5 py-4"
+              >
+                <Icon
+                  size={14}
+                  className="text-scrub-taupe shrink-0"
+                  strokeWidth={1.5}
+                />
+                <span
+                  className="text-[11px] font-medium tracking-[0.15em] uppercase text-scrub-graphite"
+                >
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main grid ────────────────────────────────── */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-16 lg:py-20">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 xl:gap-16">
+
+          {/* ── Col 1 · Brand ───────────────────────── */}
+          <div>
+            {/* Wordmark */}
+            <div className="mb-6">
+              <p
+                className="text-[28px] leading-none text-scrub-ink"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 300 }}
+              >
+                Scrub<span style={{ fontWeight: 600 }}>Skwad</span>
+              </p>
+              <p
+                className="mt-1.5 text-[10px] tracking-[0.3em] uppercase text-scrub-taupe font-light"
+              >
+                Eco Cleaning Collective
+              </p>
+            </div>
+
+            {/* Tagline */}
+            <p
+              className="text-[13px] leading-relaxed text-scrub-graphite font-light mb-7"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontStyle: "italic", fontWeight: 300 }}
+            >
+              Precision cleaning, powered by nature.
+            </p>
+
+            {/* Contact */}
+            <ul className="space-y-3 mb-8">
+              {[
+                { Icon: MapPin, text: "London, United Kingdom" },
+                { Icon: Phone, text: "+44 (0) 20 0000 0000" },
+                { Icon: Mail, text: "hello@scrubskwad.com" },
+              ].map(({ Icon, text }) => (
+                <li key={text} className="flex items-center gap-2.5">
+                  <Icon size={12} className="text-scrub-taupe shrink-0" strokeWidth={1.5} />
+                  <span className="text-[12px] font-light text-scrub-graphite">{text}</span>
+                </li>
+              ))}
+            </ul>
+
+            {/* Socials */}
+            <div className="flex gap-2.5">
+              {socials.map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex h-8 w-8 items-center justify-center rounded-full border border-scrub-taupe/40 text-scrub-graphite transition-all duration-300 hover:border-scrub-ink hover:text-scrub-ink hover:bg-scrub-ink/5"
+                >
+                  <Icon size={13} strokeWidth={1.5} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Col 2 · Services ─────────────────────── */}
+          <div>
+            <h4 className="mb-6 text-[10px] tracking-[0.28em] uppercase text-scrub-taupe font-medium">
+              Services
+            </h4>
+            <ul className="space-y-3.5">
+              {services.map(({ label, href }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="group flex items-center gap-2.5 text-[13px] font-light text-scrub-graphite transition-colors duration-200 hover:text-scrub-ink"
+                  >
+                    <span className="h-px w-3 bg-scrub-taupe/40 transition-all duration-300 group-hover:w-5 group-hover:bg-scrub-ink" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ── Col 3 · Company ──────────────────────── */}
+          <div>
+            <h4 className="mb-6 text-[10px] tracking-[0.28em] uppercase text-scrub-taupe font-medium">
+              Company
+            </h4>
+            <ul className="space-y-3.5">
+              {company.map(({ label, href }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="group flex items-center gap-2.5 text-[13px] font-light text-scrub-graphite transition-colors duration-200 hover:text-scrub-ink"
+                  >
+                    <span className="h-px w-3 bg-scrub-taupe/40 transition-all duration-300 group-hover:w-5 group-hover:bg-scrub-ink" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA block */}
+            <div className="mt-8 border border-scrub-taupe/30 bg-scrub-panel p-4 shadow-premium">
+              <p
+                className="text-[13px] font-light text-scrub-graphite mb-3"
+              >
+                Ready for a spotless space?
+              </p>
+              <Link
+                href="/book"
+                className="inline-flex items-center gap-2 text-[11px] tracking-[0.18em] uppercase font-medium text-scrub-ink border-b border-scrub-ink/30 pb-px transition-all hover:border-scrub-ink hover:gap-3"
+              >
+                Book a Clean <ArrowRight size={11} />
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Col 4 · Newsletter ───────────────────── */}
+          <div>
+            <h4 className="mb-3 text-[10px] tracking-[0.28em] uppercase text-scrub-taupe font-medium">
+              Newsletter
+            </h4>
+
+            {/* Display headline */}
+            <p
+              className="text-[26px] leading-tight text-scrub-ink mb-1"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 300 }}
+            >
+              Clean living,
+            </p>
+            <p
+              className="text-[26px] leading-tight text-scrub-ink mb-4"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 300, fontStyle: "italic" }}
+            >
+              delivered to you.
+            </p>
+
+            <p className="text-[12px] font-light leading-relaxed text-scrub-graphite mb-6">
+              Eco tips, exclusive offers, and behind-the-scenes from the Skwad.
+              Zero spam, ever.
+            </p>
+
+            {/* Form */}
+            <form onSubmit={handleSubscribe}>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email address"
+                  disabled={status === "loading" || status === "success"}
+                  className="w-full border-b border-scrub-taupe/50 bg-transparent pb-3 pr-10 pt-1 text-[13px] text-scrub-ink placeholder:text-scrub-taupe outline-none transition-colors duration-300 focus:border-scrub-ink disabled:opacity-40"
+                />
+                <button
+                  type="submit"
+                  disabled={!email || status === "loading" || status === "success"}
+                  aria-label="Subscribe"
+                  className="absolute right-0 bottom-2.5 text-scrub-taupe transition-colors hover:text-scrub-ink disabled:opacity-30"
+                >
+                  <ArrowRight size={15} strokeWidth={1.5} />
+                </button>
+              </div>
+
+              {/* Feedback */}
+              <div className="mt-3 min-h-[18px]">
+                {status === "success" && (
+                  <p className="text-[11px] tracking-wide text-scrub-graphite">
+                    ✓ You're on the list. Welcome to the Skwad.
+                  </p>
+                )}
+                {status === "error" && (
+                  <p className="text-[11px] tracking-wide text-red-400">
+                    Something went wrong. Please try again.
+                  </p>
+                )}
+              </div>
+            </form>
+
+            {/* Eco pledge */}
+            <div className="mt-7 flex items-start gap-3 border border-scrub-taupe/30 bg-scrub-panel p-3.5 shadow-premium">
+              <Leaf size={13} className="text-scrub-taupe mt-0.5 shrink-0" strokeWidth={1.5} />
+              <p className="text-[11px] font-light leading-relaxed text-scrub-graphite">
+                For every 10 subscribers, we plant a tree.{" "}
+                <span className="text-scrub-ink">4,200+ members</span> and growing.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ── Decorative rule ──────────────────────────── */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-12">
+        <div className="h-px bg-gradient-to-r from-transparent via-scrub-taupe/40 to-transparent" />
+      </div>
+
+      {/* ── Bottom bar ───────────────────────────────── */}
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[11px] font-light tracking-wide text-scrub-taupe">
+            © {new Date().getFullYear()} ScrubSkwad Ltd. All rights reserved.
+          </p>
+          <div className="flex flex-wrap gap-5">
+            {[
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Terms of Service", href: "/terms-of-service" },
+              { label: "Cookie Policy", href: "/cookie-policy" },
+            ].map(({ label, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-[11px] font-light tracking-wide text-scrub-taupe transition-colors hover:text-scrub-graphite"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </footer>
+  );
+}
