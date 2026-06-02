@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { services } from "@/lib/site-data";
 
 export default function ServicesPage() {
@@ -29,6 +29,32 @@ export default function ServicesPage() {
             </div>
           </Link>
         ))}
+      </section>
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 md:grid-cols-2 md:px-8">
+          <div>
+            <p className="text-sm font-bold uppercase text-scrub-graphite">Built as one platform</p>
+            <h2 className="mt-3 text-3xl font-black md:text-5xl">Combine property services without starting over.</h2>
+            <p className="mt-5 leading-7 text-scrub-graphite">
+              The ScrubSkwad booking flow lets customers combine cleaning, removals, bins and mobile vehicle care in one
+              quote request. That matters for move-outs, landlord turns, Airbnb resets and busy homes that need several
+              jobs coordinated at once.
+            </p>
+          </div>
+          <div className="grid gap-3">
+            {[
+              "One guided request across multiple services",
+              "Live estimate updates for price, staff and duration",
+              "Admin review before deposit confirmation",
+              "Designed for Greater Manchester properties"
+            ].map((item) => (
+              <p key={item} className="flex items-center gap-3 rounded-md bg-scrub-mist p-4 font-semibold">
+                <CheckCircle2 size={19} className="text-scrub-graphite" />
+                {item}
+              </p>
+            ))}
+          </div>
+        </div>
       </section>
     </main>
   );
